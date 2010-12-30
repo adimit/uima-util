@@ -1,0 +1,9 @@
+*~
+.*.swp
+.*.swo
+/bin
+/dist
+/target
+/.settings
+/.classpath
+/.project
