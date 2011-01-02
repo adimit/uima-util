@@ -5,6 +5,8 @@ import java.util.Iterator;
 
 public class UimaList<T> implements Collection<T> {
 
+	private T head;
+
 	/**
 	 * {@inheritDoc}
 	 * @see Collection#size()
@@ -34,7 +36,7 @@ public class UimaList<T> implements Collection<T> {
 	 * @see Iterable#iterator()
 	 */
 	public Iterator<T> iterator() {
-		return null;
+		return new UimaListIterator<T>(this.head);
 	}
 
 	/**
