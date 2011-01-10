@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.uima.cas.CAS;
+import org.apache.uima.cas.FeatureStructure;
 
 import org.apache.uima.jcas.cas.EmptyFSList;
 import org.apache.uima.jcas.cas.FSList;
@@ -12,35 +13,50 @@ import org.apache.uima.jcas.cas.TOP;
 
 import org.apache.uima.jcas.JCas;
 
-public class FSListCollection<T extends TOP> implements Collection<T> {
+public class FSListCollection<T extends FeatureStructure> implements Collection<T> {
 
 	private final JCas cas;
+	private int size = 0;
+	private NonEmptyFSList l;
 
 	public FSListCollection(JCas cas) {
 		this.cas = cas;
-		this.head = new EmptyFSList(this.cas);
-		this.tail = this.head;
+		this.l = null;
+		this.size = 0;
 	}
 
-	public FSListCollection(final FSList head) {
-		final CAS someCas = head.getCAS();
-		if (someCas instanceof JCas) {
-			this.cas = (JCas)someCas;
+	public FSListCollection(final EmptyFSList h) {
+		this(transformCAS(h.getCAS()));
+	}
+
+	public FSListCollection(final NonEmptyFSList h) {
+		this.cas = transformCAS(h.getCAS());
+		this.l = h;
+		this.size = -1;
+	}
+
+	// Very unsafe, if you pass it a non-JCas the whole application 
+	// will crash and burn. Should be a FIXME
+	private static JCas transformCAS(final CAS cas) {
+		if (cas instanceof JCas) {
+			return (JCas)cas;
 		} else {
-			throw new RuntimeException
-				("Our CAS isn't a JCas. That's not yet implemented.");
+			throw new RuntimeException("The CAS isn't a JCas.");
 		}
 	}
-
-	private FSList head; 
-	private FSList tail; 
-	private int size = 0;
 
 	/**
 	 * {@inheritDoc}
 	 * @see Collection#size()
 	 */
 	public int size() {
+		switch (this.size) {
+		case -1: { this.size = calculateFSListSize(this.l); return this.size; }
+		default: { return this.size; }
+		}
+	}
+
+	private static int calculateFSListSize(final NonEmptyFSList l) {
 		return 0;
 	}
 
@@ -204,5 +220,4 @@ public class FSListCollection<T extends TOP> implements Collection<T> {
 	public int hashCode() {
 		return 1;
 	} 
-
 }
