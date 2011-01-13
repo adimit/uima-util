@@ -35,14 +35,8 @@ public class FSListCollection<T extends FeatureStructure> implements Collection<
 		this.size = -1;
 	}
 
-	// Very unsafe, if you pass it a non-JCas the whole application 
-	// will crash and burn. Should be a FIXME
 	private static JCas transformCAS(final CAS cas) {
-		if (cas instanceof JCas) {
-			return (JCas)cas;
-		} else {
-			throw new RuntimeException("The CAS isn't a JCas.");
-		}
+		return cas.getJCas();
 	}
 
 	/**
