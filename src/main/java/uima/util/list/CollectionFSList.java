@@ -71,14 +71,21 @@ public class CollectionFSList<T extends TOP> {
 	}
 
 	/**
-	 * Add an element to {@underline the front of the list}.
+	 * Add an element to {@underline the end of the list}.
 	 *
-	 * {@link #prepend} is an alias for this. {@code O(1)}
+	 * {@link #append} is an alias for this. {@code O(1)}
 	 *
 	 * @param t The element to be added.
 	 * @return Always {@code true}.
 	 */
 	public boolean add(T t) {
+		final NonEmptyFSList tail_ = new NonEmptyFSList(this.cas);
+		tail_.setHead(t);
+		tail_.setTail(new EmptyFSList(this.cas));
+		if (this.head == null) { // if this is the first add operation
+			this.head = this.tail = tail_;
+		}
+		if (this.tail == null) { whack(); }
 		final NonEmptyFSList head_ = new NonEmptyFSList(cas);
 		head_.setHead(t);
 		if (this.head == null) { // if this is the first add operation
